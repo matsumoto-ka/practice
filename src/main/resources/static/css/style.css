@@ -1,0 +1,22 @@
+table {
+	border-collapse: collapse;
+	width:50%;
+}
+
+td {
+	border: thin solid black;
+	text-align:center;
+}
+
+th {
+	border: thin solid black;
+	background-color:yellow;
+}
+
+.odd {
+	background-color: white;
+}
+
+.even {
+	background-color: aliceblue;
+}

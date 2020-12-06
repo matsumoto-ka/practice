@@ -1,0 +1,35 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>検索画面</title>
+</head>
+<body>
+	<h1>ユーザー検索画面</h1>
+	<form method="POST" action="output.html" th:action="@{output}"
+		th:object="${userForm}">
+		<span th:text="${message}" class="error"></span>
+		<p>
+			ID(3桁の半角数字) 
+			<input type="text" name="id" th:field="${userForm.id}">
+		</p>
+		<p style="color: red;" th:errors="${userForm.id}" class="error"></p>
+		<p>
+			性別 <select th:field="${userForm.sex}">
+				<option value=""></option>
+				<option value="男">男</option>
+				<option value="女">女</option>
+			</select>
+		</p>
+		<p>
+			年齢<input type="text" name="age_from" th:field="${userForm.age_from}">
+			～<input type="text" name="age_from" th:field="${userForm.age_to}">
+		</p>
+		<p style="color: red;" th:errors="${userForm.age_from}" class="error"></p>
+		<p style="color: red;" th:errors="${userForm.age_to}" class="error"></p>
+		<p>
+			<input type="submit" value="検索">
+		</p>
+	</form>
+	<a href="register.html" th:href="@{register}">新規登録画面へ</a>
+</body>
+</html>

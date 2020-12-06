@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link th:href="@{css/style.css}" rel="stylesheet" type="text/css">
+<title>検索結果画面</title>
+</head>
+<body>
+	<h1>検索結果画面</h1>
+	<span th:text="${message}"></span>
+
+	<table>
+		<tr>
+			<th>ID</th>
+			<th>ユーザー名</th>
+			<th>性別</th>
+			<th>年齢</th>
+			<th>編集</th>
+			<th>削除</th>
+		</tr>
+		<tr th:each="user,iterStat:${userList}">
+			<td th:class="${iterStat.odd}? 'odd' : 'even'" th:text="${user.id}"></td>
+			<td th:class="${iterStat.odd}? 'odd' : 'even'"
+				th:text="${user.user_name}"></td>
+			<td th:class="${iterStat.odd}? 'odd' : 'even'" th:text="${user.sex}"></td>
+			<td th:class="${iterStat.odd}? 'odd' : 'even'" th:text="${user.age}"></td>
+			<td th:class="${iterStat.odd}? 'odd' : 'even'">
+				<form th:action="@{/edit}" method="post">
+					<input type="submit" class="btn" name="edit" value="編集">
+					<input type="hidden" name="id" th:value="${user.id}">
+				</form>
+			</td>
+			<td th:class="${iterStat.odd}? 'odd' : 'even'">
+				<form th:action="@{/delete}" method="post">
+					<input type="submit" class="btn" name="delete" value="削除"
+					onclick='return confirm("削除してよろしいですか？");'>
+					<input type="hidden" name="id" th:value="${user.id}">
+				</form>
+			</td>
+		</tr>
+	</table>
+	<a href="index.html" th:href="@{input}">検索画面へ</a>
+</body>
+</html>
