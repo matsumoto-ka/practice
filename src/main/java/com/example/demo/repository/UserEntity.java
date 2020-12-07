@@ -1,14 +1,24 @@
-package com.example.demo;
+package com.example.demo.repository;
 
-import javax.validation.constraints.Pattern;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Entity
+@Table(name = "user_mst")
 @Data
-public class UserForm {
+@AllArgsConstructor
+@NoArgsConstructor
+public class UserEntity {
 
-	@Pattern(regexp = "^[0-9]*$", message = "IDは半角数字で入力してください")
-	private String id;
+	@Id
+	@GeneratedValue
+	private int id;
 
 	private String user_name;
 
@@ -16,20 +26,17 @@ public class UserForm {
 
 	private String sex;
 
-	@Pattern(regexp = "^[0-9]*$", message = "年齢は半角数字で入力してください")
 	private String age;
 	
-	@Pattern(regexp = "^[0-9]*$", message = "年齢は半角数字で入力してください")
 	private String age_from;
 	
-	@Pattern(regexp = "^[0-9]*$", message = "年齢は半角数字で入力してください")
 	private String age_to;
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 

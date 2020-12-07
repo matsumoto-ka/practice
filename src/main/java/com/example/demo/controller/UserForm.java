@@ -1,10 +1,14 @@
-package com.example.demo;
+package com.example.demo.controller;
+
+import javax.validation.constraints.Pattern;
 
 import lombok.Data;
 
 @Data
-public class UserDto {
-	private int id;
+public class UserForm {
+
+	@Pattern(regexp = "^[0-9]*$", message = "IDは半角数字で入力してください")
+	private String id;
 
 	private String user_name;
 
@@ -12,17 +16,20 @@ public class UserDto {
 
 	private String sex;
 
+	@Pattern(regexp = "^[0-9]*$", message = "年齢は半角数字で入力してください")
 	private String age;
 	
+	@Pattern(regexp = "^[0-9]*$", message = "年齢は半角数字で入力してください")
 	private String age_from;
 	
+	@Pattern(regexp = "^[0-9]*$", message = "年齢は半角数字で入力してください")
 	private String age_to;
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.example.demo.service.UserDto;
+import com.example.demo.service.UserService;
 
 @Controller
 public class UserController {
@@ -59,8 +62,6 @@ public class UserController {
 
 	@RequestMapping("/edit")
 	public String edit(@Validated UserForm userForm, BindingResult bindingResult, Model model) {
-		System.out.println("editController");
-
 		// FormからDTOに転記
 		UserDto inDto = new UserDto();
 		BeanUtils.copyProperties(userForm, inDto);
@@ -85,8 +86,6 @@ public class UserController {
 
 	@RequestMapping("/update")
 	public String update(@Validated UserForm userForm, BindingResult bindingResult, Model model) {
-		System.out.println("updateController");
-
 		// FormからDTOに転記
 		UserDto inDto = new UserDto();
 		BeanUtils.copyProperties(userForm, inDto);

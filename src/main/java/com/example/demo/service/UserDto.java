@@ -1,23 +1,9 @@
-package com.example.demo;
+package com.example.demo.service;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "user_mst")
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class UserEntity {
-
-	@Id
-	@GeneratedValue
+public class UserDto {
 	private int id;
 
 	private String user_name;
