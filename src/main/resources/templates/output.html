@@ -22,7 +22,11 @@
 			<td th:class="${iterStat.odd}? 'odd' : 'even'" th:text="${user.id}"></td>
 			<td th:class="${iterStat.odd}? 'odd' : 'even'"
 				th:text="${user.user_name}"></td>
-			<td th:class="${iterStat.odd}? 'odd' : 'even'" th:text="${user.sex}"></td>
+			<td th:class="${iterStat.odd}? 'odd' : 'even'" th:switch="${user.sex}" >
+					<label th:case="0">男</label>
+					<label th:case="1">女</label>
+					<label th:case="*">未回答</label>
+			</td>
 			<td th:class="${iterStat.odd}? 'odd' : 'even'" th:text="${user.age}"></td>
 			<td th:class="${iterStat.odd}? 'odd' : 'even'">
 				<form th:action="@{/edit}" method="post">
