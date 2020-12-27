@@ -2,9 +2,11 @@ package com.example.demo.service;
 
 import java.util.List;
 
+import com.lab.app.ketman.mybatis.domain.UserMstWithBLOBs;
+
 public interface UserService {
 	// 条件検索
-	List<UserDto> findByConditions(UserDto inDto);
+	List<UserMstWithBLOBs> findByConditions(UserDto inDto);
 
 	// 編集したレコードを登録
 	int update(UserDto inDto);

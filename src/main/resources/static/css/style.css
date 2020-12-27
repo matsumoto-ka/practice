@@ -1,16 +1,20 @@
+body{
+	width:40%;
+}
+
 table {
 	border-collapse: collapse;
-	width:50%;
+	width: 100%;
 }
 
 td {
 	border: thin solid black;
-	text-align:center;
+	text-align: center;
 }
 
 th {
 	border: thin solid black;
-	background-color:yellow;
+	background-color: yellow;
 }
 
 .odd {
@@ -19,4 +23,20 @@ th {
 
 .even {
 	background-color: aliceblue;
+}
+
+.error {
+	color: red;
+}
+
+.btn{
+	width:50px;
+	height:30px;
+}
+
+.bottom_btn{
+	width:50px;
+	height:30px;
+	margin:10px;
+	float:right;
 }

@@ -1,15 +1,16 @@
 package com.example.demo.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.repository.UserEntity;
 import com.example.demo.repository.UserRepository;
+import com.lab.app.ketman.mybatis.domain.UserMstExample;
+import com.lab.app.ketman.mybatis.domain.UserMstWithBLOBs;
 
 @Service
 @Transactional
@@ -24,64 +25,83 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<UserDto> findByConditions(UserDto inDto) {
-		List<UserEntity> outUserEntityList = new ArrayList<UserEntity>();
+	public List<UserMstWithBLOBs> findByConditions(UserDto inDto) {
+		// UserMstテーブルの条件検索用クラスを生成
+		UserMstExample ex = new UserMstExample();
 
-		// DTOからEntityに転記
-		UserEntity inUserEntity = new UserEntity();
-		BeanUtils.copyProperties(inDto, inUserEntity);
-
-		// 検索を実行
-		outUserEntityList = userRepository.findByConditions(inUserEntity);
-
-		List<UserDto> outUserDtoList = new ArrayList<UserDto>();
-
-		// 検索結果がnull出ない場合、DTOに転記する
-		if (outUserEntityList != null) {
-			for (int i = 0; i < outUserEntityList.size(); i++) {
-				UserEntity user = outUserEntityList.get(i);
-				UserDto userDto = new UserDto();
-				BeanUtils.copyProperties(user, userDto);
-
-				outUserDtoList.add(userDto);
-			}
-			System.out.println("DTO転記" + outUserDtoList);
+		ex.createCriteria();
+		// 検索条件を設定
+		// ID
+		if (!(inDto.getId() == 0)) {
+			ex.or().andIdEqualTo(inDto.getId());
 		}
-		return outUserDtoList;
+		// 性別
+		if (!(StringUtils.isEmpty(inDto.getSex()))) {
+			ex.or().andSexEqualTo(Integer.parseInt(inDto.getSex()));
+		}
+		// 年齢
+		if (!StringUtils.isEmpty(inDto.getAge_from()) && !StringUtils.isEmpty(inDto.getAge_to())) {
+			ex.or().andAgeBetween(Integer.parseInt(inDto.getAge_from()),
+					Integer.parseInt(inDto.getAge_to()));
+		} else if (!(StringUtils.isEmpty(inDto.getAge_from()))) {
+			ex.or().andAgeGreaterThan(Integer.parseInt(inDto.getAge_from()));
+		} else if (!(StringUtils.isEmpty(inDto.getAge_to()))) {
+			ex.or().andAgeLessThan(Integer.parseInt(inDto.getAge_to()));
+		}
+
+		// 検索実行
+		List<UserMstWithBLOBs> userMstList = userRepository.findByConditions(ex);
+
+		return userMstList;
 	}
 
 	@Override
 	public int update(UserDto inDto) {
-		// DTOからEntityに転記
-		UserEntity inUserEntity = new UserEntity();
-		BeanUtils.copyProperties(inDto, inUserEntity);
+		// UserMstテーブルの条件検索用クラスを生成
+		UserMstExample ex = new UserMstExample();
+		
+		// 条件にIDを設定
+		ex.createCriteria().andIdEqualTo(inDto.getId());
 
-		// 更新を実行
-		int resultCode = userRepository.updateRecord(inUserEntity);
+		// UserMstWithBLOBsを生成
+		UserMstWithBLOBs record = new UserMstWithBLOBs();
+
+		// DTOからUserMstWithBLOBsに転記
+		BeanUtils.copyProperties(inDto, record);
+		record.setAge(Integer.parseInt(inDto.getAge()));
+		record.setSex(Integer.parseInt(inDto.getSex()));
+		record.setTel(Long.parseLong(inDto.getTel()));
+		record.setPostal_code(Integer.parseInt(inDto.getPostal_code()));
+		
+		// 更新実行
+		int resultCode = userRepository.updateRecord(record, ex);
 
 		return resultCode;
 	}
-	
+
 	@Override
 	public int delete(UserDto inDto) {
-		// DTOからEntityに転記
-		UserEntity inUserEntity = new UserEntity();
-		BeanUtils.copyProperties(inDto, inUserEntity);
-
-		// 削除を実行
-		int resultCode = userRepository.deleteRecord(inUserEntity);
+		// 削除実行
+		int resultCode = userRepository.deleteRecord(inDto.getId());
 
 		return resultCode;
 	}
-	
+
 	@Override
 	public int register(UserDto inDto) {
-		// DTOからEntityに転記
-		UserEntity inUserEntity = new UserEntity();
-		BeanUtils.copyProperties(inDto, inUserEntity);
+		// UserMstWithBLOBsを生成
+		UserMstWithBLOBs record = new UserMstWithBLOBs();
 
-		// 登録を実行
-		int resultCode = userRepository.registerRecord(inUserEntity);
+		// DTOからUserMstWithBLOBsに転記
+		BeanUtils.copyProperties(inDto, record);
+		record.setAge(Integer.parseInt(inDto.getAge()));
+		record.setSex(Integer.parseInt(inDto.getSex()));
+		record.setTel(Long.parseLong(inDto.getTel()));
+		record.setPostal_code(Integer.parseInt(inDto.getPostal_code()));
+		
+
+		// 登録実行
+		int resultCode = userRepository.registerRecord(record);
 
 		return resultCode;
 	}

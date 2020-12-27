@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link th:href="@{css/style.css}" rel="stylesheet" type="text/css">
+<title>編集画面</title>
+</head>
+<body>
+	<h1>編集結果確認画面</h1>
+	<span th:text="${message}"></span>
+
+	<form th:action="@{/update}" method="post" th:object="${registerForm}">
+		<input type="hidden" name="id" th:value="${registerForm.id}">
+		<input type="hidden" name="user_name" th:value="${registerForm.user_name}">
+		<input type="hidden" name="user_name_kana" th:value="${registerForm.user_name_kana}">
+		<input type="hidden" name="sex" th:value="${registerForm.sex}">
+		<input type="hidden" name="tel" th:value="${registerForm.tel}">
+		<input type="hidden" name="postal_code" th:value="${registerForm.postal_code}">
+		<input type="hidden" name="addr1" th:value="${registerForm.addr1}">
+		<input type="hidden" name="addr2" th:value="${registerForm.addr2}">
+		<input type="hidden" name="addr3" th:value="${registerForm.addr3}">
+		<input type="hidden" name="addr4" th:value="${registerForm.addr4}">
+		<input type="hidden" name="addr5" th:value="${registerForm.addr5}">
+		<input type="hidden" name="age" th:value="${registerForm.age}">
+		<input type="hidden" name="birth_date" th:value="${registerForm.birth_date}">
+		
+		<table>
+			<tr>
+				<th>ID</th>
+				<td><span th:text="${registerForm.id}"></span></td>
+			</tr>
+			<tr>
+				<th>ユーザー名</th>
+				<td><span th:text="${registerForm.user_name}"></span></td>
+			</tr>
+			<tr>
+				<th>ふりがな</th>
+				<td><span th:text="${registerForm.user_name_kana}"></span></td>
+			</tr>
+			<tr>
+				<th>性別</th>
+				<td th:switch="${registerForm.sex}">
+					<label th:case="0">男</label>
+					<label th:case="1">女</label>
+					<label th:case="*">未回答</label>
+				</td>
+			</tr>
+			<tr>
+				<th>電話番号</th>
+				<td><span th:text="${registerForm.tel}"></span></td>
+			</tr>
+			<tr>
+				<th>郵便番号</th>
+				<td><span th:text="${registerForm.postal_code}"></span></td>
+			</tr>
+			<tr>
+				<th>住所1</th>
+				<td><span th:text="${registerForm.addr1}"></span></td>
+			</tr>
+			<tr>
+				<th>住所2</th>
+				<td><span th:text="${registerForm.addr2}"></span></td>
+			</tr>
+			<tr>
+				<th>住所3</th>
+				<td><span th:text="${registerForm.addr3}"></span></td>
+			</tr>
+			<tr>
+				<th>住所4</th>
+				<td><span th:text="${registerForm.addr4}"></span></td>
+			</tr>
+			<tr>
+				<th>住所5</th>
+				<td><span th:text="${registerForm.addr5}"></span></td>
+			</tr>
+			<tr>
+				<th>年齢</th>
+				<td><span th:text="${registerForm.age}"></span></td>
+			</tr>
+			<tr>
+				<th>生年月日</th>
+				<td><span th:text="${registerForm.birth_date}"></span></td>
+			</tr>
+		</table>
+		
+		<input type="submit" class="bottom_btn" name="edit" value="更新">
+		
+	</form>
+	
+	<form th:action="@{/return_edit}" method="post" th:object="${registerForm}">
+		<input type="hidden" name="id" th:value="${registerForm.id}">
+		<input type="hidden" name="user_name" th:value="${registerForm.user_name}">
+		<input type="hidden" name="user_name_kana" th:value="${registerForm.user_name_kana}">
+		<input type="hidden" name="sex" th:value="${registerForm.sex}">
+		<input type="hidden" name="tel" th:value="${registerForm.tel}">
+		<input type="hidden" name="postal_code" th:value="${registerForm.postal_code}">
+		<input type="hidden" name="addr1" th:value="${registerForm.addr1}">
+		<input type="hidden" name="addr2" th:value="${registerForm.addr2}">
+		<input type="hidden" name="addr3" th:value="${registerForm.addr3}">
+		<input type="hidden" name="addr4" th:value="${registerForm.addr4}">
+		<input type="hidden" name="addr5" th:value="${registerForm.addr5}">
+		<input type="hidden" name="age" th:value="${registerForm.age}">
+		<input type="hidden" name="birth_date" th:value="${registerForm.birth_date}">
+		<input type="submit" class="bottom_btn" name="return" value="戻る">
+	</form>
+
+	<a href="index.html" th:href="@{input}">検索画面へ</a>
+</body>
+</html>

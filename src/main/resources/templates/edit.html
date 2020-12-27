@@ -8,34 +8,100 @@
 <body>
 	<h1>ユーザー情報編集画面</h1>
 	<span th:text="${message}"></span>
+	<p th:errors="${registerForm.user_name}" class="error"></p>
+	<p th:errors="${registerForm.user_name_kana}" class="error"></p>
+	<p th:errors="${registerForm.sex}" class="error"></p>
+	<p th:errors="${registerForm.tel}" class="error"></p>
+	<p th:errors="${registerForm.postal_code}" class="error"></p>
+	<p th:errors="${registerForm.addr1}" class="error"></p>
+	<p th:errors="${registerForm.addr2}" class="error"></p>
+	<p th:errors="${registerForm.addr3}" class="error"></p>
+	<p th:errors="${registerForm.addr4}" class="error"></p>
+	<p th:errors="${registerForm.addr5}" class="error"></p>
+	<p th:errors="${registerForm.age}" class="error"></p>
+	<p th:errors="${registerForm.birth_year}" class="error"></p>
+	<p th:errors="${registerForm.birth_month}" class="error"></p>
+	<p th:errors="${registerForm.birth_day}" class="error"></p>
+	<p th:errors="${registerForm.sex}" class="error"></p>
 
-	<form th:action="@{/update}" method="post" th:object="${userForm}">
-		<input type="hidden" name="id" th:value="${userForm.id}">
-		
+	<form th:action="@{/edit_confirm}" method="post" th:object="${registerForm}">
+		<input type="hidden" name="id" th:value="${registerForm.id}">
+
 		<table>
 			<tr>
 				<th>ID</th>
-				<th>ユーザー名</th>
-				<th>性別</th>
-				<th>年齢</th>
-				<th>更新</th>
+				<td><span th:text="${registerForm.id}"></span></td>
 			</tr>
 			<tr>
-				<td><span th:text="${userForm.id}"></span></td>
-
+				<th>ユーザー名</th>
 				<td><input type="text" name="user_name"
-					th:value="${userForm.user_name}"></td>
-				<td>
-					<select th:field="${userForm.sex}">
-						<option value="男">男</option>
-						<option value="女">女</option>
-					</select>
-				</td>
-				<td><input type="text" name="age" th:value="${userForm.age}"></td>
-				<td><input type="submit" class="btn" name="edit" value="更新">
+					th:value="${registerForm.user_name}"></td>
+			</tr>
+			<tr>
+				<th>ふりがな</th>
+				<td><input type="text" name="user_name_kana"
+					th:value="${registerForm.user_name_kana}"></td>
+			</tr>
+			<tr>
+				<th>性別</th>
+				<td><select th:field="${registerForm.sex}">
+						<option value="0">男</option>
+						<option value="1">女</option>
+						<option value="2">未回答</option>
+				</select></td>
+			</tr>
+			<tr>
+				<th>電話番号</th>
+				<td><input type="text" name="tel" th:value="${registerForm.tel}"></td>
+			</tr>
+			<tr>
+				<th>郵便番号</th>
+				<td><input type="text" name="postal_code"
+					th:value="${registerForm.postal_code}"></td>
+			</tr>
+			<tr>
+				<th>住所1</th>
+				<td><input type="text" name="addr1"
+					th:value="${registerForm.addr1}"></td>
+			</tr>
+			<tr>
+				<th>住所2</th>
+				<td><input type="text" name="addr2"
+					th:value="${registerForm.addr2}"></td>
+			</tr>
+			<tr>
+				<th>住所3</th>
+				<td><input type="text" name="addr3"
+					th:value="${registerForm.addr3}"></td>
+			</tr>
+			<tr>
+				<th>住所4</th>
+				<td><input type="text" name="addr4"
+					th:value="${registerForm.addr4}"></td>
+			</tr>
+			<tr>
+				<th>住所5</th>
+				<td><input type="text" name="addr5"
+					th:value="${registerForm.addr5}"></td>
+			</tr>
+			<tr>
+				<th>年齢</th>
+				<td><input type="text" name="age" th:value="${registerForm.age}" size="3" maxlength="3"></td>
+			</tr>
+			<tr>
+				<th>生年月日</th>
+				<td><input type="text" name="birth_year"
+						th:value="${registerForm.birth_year}" size="4" maxlength="4">年
+					<input type="text" name="birth_month"
+						th:value="${registerForm.birth_month}" size="2" maxlength="2">月
+					<input type="text" name="birth_day"
+						th:value="${registerForm.birth_day}" size="2" maxlength="2">日
 				</td>
 			</tr>
 		</table>
+		
+		<input type="submit" class="bottom_btn" name="edit" value="更新">
+		
 	</form>
 
 	<a href="index.html" th:href="@{input}">検索画面へ</a>
