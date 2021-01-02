@@ -35,9 +35,9 @@ public class UserForm {
 	@Pattern(regexp = "^[0-9]*$", message = "年齢は半角数字で入力してください")
 	private String age;
 	
-	@Pattern(regexp = "^[0-9]*$", message = "年齢は半角数字で入力してください")
+	@Pattern(regexp = "^[0-9]*$", message = "年齢（FROM）は半角数字で入力してください")
 	private String age_from;
 	
-	@Pattern(regexp = "^[0-9]*$", message = "年齢は半角数字で入力してください")
+	@Pattern(regexp = "^[0-9]*$", message = "年齢（TO）は半角数字で入力してください")
 	private String age_to;
 }

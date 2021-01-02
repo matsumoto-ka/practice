@@ -11,12 +11,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.example.demo.service.UserDto;
 import com.example.demo.service.UserService;
 import com.lab.app.ketman.mybatis.domain.UserMstWithBLOBs;
 
 @Controller
+@RequestMapping("userController")
 public class UserController {
 
 	private final UserService userService;
@@ -36,7 +38,8 @@ public class UserController {
 		return "index.html";
 	}
 
-	@RequestMapping("/output")
+	//@RequestMapping("/output")
+	@RequestMapping(value = "output", params = "output", method = RequestMethod.POST)
 	public String result(@Validated UserForm userForm, BindingResult bindingResult, Model model) {
 		if (bindingResult.hasErrors()) {
 			return "index.html";
@@ -62,7 +65,8 @@ public class UserController {
 		return "output.html";
 	}
 
-	@RequestMapping("/edit")
+	//@RequestMapping("/edit")
+	@RequestMapping(value = "edit", params = "edit", method = RequestMethod.POST)
 	public String edit(@Validated UserForm userForm, BindingResult bindingResult, Model model) {
 		// FormからDTOに転記
 		UserDto inDto = new UserDto();
@@ -103,7 +107,8 @@ public class UserController {
 		return "edit.html";
 	}
 
-	@RequestMapping("/edit_confirm")
+	//@RequestMapping("/edit_confirm")
+	@RequestMapping(value = "edit_confirm", params = "edit_confirm", method = RequestMethod.POST)
 	public String editConfirm(@Validated RegisterForm registerForm, BindingResult bindingResult, Model model) {
 		if (bindingResult.hasErrors()) {
 			return "edit.html";
@@ -116,48 +121,8 @@ public class UserController {
 		return "edit_confirm.html";
 	}
 
-	@RequestMapping("/return_edit")
-	public String returnEdit(RegisterForm registerForm, BindingResult bindingResult, Model model) {
-		// 誕生日を年月日に分割して設定
-		String birthDate = registerForm.getBirth_date();
-		registerForm.setBirth_year(birthDate.substring(0, 4));
-		// DBに登録されている月・日が0埋めされていないため、下記の処理で暫定対処
-		registerForm.setBirth_month(String.format("%2s", birthDate.substring(5, 7).replace("/", "")).replace(" ", "0"));
-		registerForm.setBirth_day(
-				String.format("%2s", birthDate.substring(birthDate.length() - 2).replace("/", "")).replace(" ", "0"));
-		
-		model.addAttribute("registerForm", registerForm);
-
-		return "edit.html";
-	}
-
-	@RequestMapping("/update")
-	public String update(@Validated UserForm userForm, BindingResult bindingResult, Model model) {
-		// FormからDTOに転記
-		UserDto inDto = new UserDto();
-		BeanUtils.copyProperties(userForm, inDto);
-		if (!StringUtils.isEmpty(userForm.getId())) {
-			inDto.setId(Integer.parseInt(userForm.getId()));
-		}
-
-		// サービス呼び出し
-		int resultCode = userService.update(inDto);
-
-		// 更新結果に応じてメッセージを設定する
-		if (resultCode != 0) {
-			model.addAttribute("message", "ID:" + userForm.getId() + "の情報を更新しました。");
-
-			// formを初期化し、検索画面に戻る
-			userForm = new UserForm();
-			model.addAttribute("userForm", userForm);
-			return "index.html";
-		} else {
-			model.addAttribute("message", "更新に失敗しました");
-		}
-		return "edit.html";
-	}
-
-	@RequestMapping("/delete")
+	//@RequestMapping("/delete")
+	@RequestMapping(value = "delete", params = "delete", method = RequestMethod.POST)
 	public String delete(@Validated UserForm userForm, BindingResult bindingResult, Model model) {
 		// FormからDTOに転記
 		UserDto inDto = new UserDto();
@@ -183,12 +148,14 @@ public class UserController {
 	}
 
 	@RequestMapping("/register")
+	//@RequestMapping(value = "register", params = "register", method = RequestMethod.POST)
 	public String register(RegisterForm registerForm, BindingResult bindingResult, Model model) {
 		model.addAttribute("registerForm", registerForm);
 		return "register.html";
 	}
 
-	@RequestMapping("/register_confirm")
+	//@RequestMapping("/register_confirm")
+	@RequestMapping(value = "register", params = "register_confirm", method = RequestMethod.POST)
 	public String registerConfirm(@Validated RegisterForm registerForm, BindingResult bindingResult, Model model) {
 		if (bindingResult.hasErrors()) {
 			return "register.html";
@@ -200,7 +167,8 @@ public class UserController {
 		return "register_confirm.html";
 	}
 	
-	@RequestMapping("/return_register")
+	//@RequestMapping("/return_register")
+	@RequestMapping(value = "register", params = "return_register", method = RequestMethod.POST)
 	public String returnRegister(RegisterForm registerForm, BindingResult bindingResult, Model model) {
 		// 誕生日を年月日に分割して設定
 		String birthDate = registerForm.getBirth_date();
@@ -215,7 +183,8 @@ public class UserController {
 		return "register.html";
 	}
 
-	@RequestMapping("/doRegister")
+	//@RequestMapping("/doRegister")
+	@RequestMapping(value = "register", params = "doRegister", method = RequestMethod.POST)
 	public String doRegister(@Validated RegisterForm registerForm, BindingResult bindingResult, Model model) {
 		// FormからDTOに転記
 		UserDto inDto = new UserDto();
