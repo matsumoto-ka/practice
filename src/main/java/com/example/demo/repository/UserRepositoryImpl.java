@@ -11,16 +11,31 @@ import com.lab.app.ketman.mybatis.mapper.UserMstMapper;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
-	
+
 	@Autowired
 	UserMstMapper mapper;
 
 	@Override
+	public long countByExample(UserMstExample example) {
+		// 検索実行（カウント）
+		long total = mapper.countByExample(example);
+
+		return total;
+	}
+
+	@Override
 	public List<UserMstWithBLOBs> findByConditions(UserMstExample example) {
-		// 検索実行
-		List<UserMstWithBLOBs> userMstList = mapper.selectByExampleWithBLOBs(example);
+		// 条件検索実行
+		List<UserMstWithBLOBs> userMstList = mapper.selectByExampleWithBLOBsPaging(example);
 
 		return userMstList;
+	}
+
+	@Override
+	public UserMstWithBLOBs findById(int id) {
+		// ID検索実行
+		UserMstWithBLOBs userMst = mapper.selectByPrimaryKey(id);
+		return userMst;
 	}
 
 	@Override

@@ -133,6 +133,24 @@
       order by ${orderByClause}
     </if>
   </select>
+  <select id="selectByExampleWithBLOBsPaging" parameterType="com.lab.app.ketman.mybatis.domain.UserMstExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from user_mst
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    limit ${limit}
+    offset ${offset}
+  </select>
   <select id="selectByExample" parameterType="com.lab.app.ketman.mybatis.domain.UserMstExample" resultMap="BaseResultMap">
     <!--
       WARNING - @mbg.generated

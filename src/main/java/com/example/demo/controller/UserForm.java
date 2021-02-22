@@ -40,4 +40,10 @@ public class UserForm {
 	
 	@Pattern(regexp = "^[0-9]*$", message = "年齢（TO）は半角数字で入力してください")
 	private String age_to;
+	
+	private int limit;
+	
+	private int offset;
+	
+	private String sortCondition;
 }

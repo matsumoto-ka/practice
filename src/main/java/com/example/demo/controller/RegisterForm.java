@@ -4,6 +4,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import lombok.Data;
 
@@ -14,9 +15,11 @@ public class RegisterForm {
 	private String id;
 	
 	@NotBlank(message = "ユーザー名を入力してください")
+	@Size(max = 255)
 	private String user_name;
 
 	@NotBlank(message = "ユーザー名（かな）を入力してください")
+	@Size(max = 255)
 	private String user_name_kana;
 
 	@NotBlank(message = "性別を入力してください")
@@ -24,24 +27,31 @@ public class RegisterForm {
 	
 	@NotBlank(message = "電話番号を入力してください")
 	@Pattern(regexp = "^[0-9]*$", message = "電話番号は半角数字で入力してください")
+	@Size(max = 30)
 	private String tel;
 	
 	@NotBlank(message = "郵便番号を入力してください")
 	@Pattern(regexp = "^[0-9]*$", message = "郵便番号は半角数字で入力してください")
+	@Size(max = 8)
 	private String postal_code;
 	
 	@NotBlank(message = "都道府県を入力してください")
+	@Size(max = 50)
 	private String addr1;
 	
 	@NotBlank(message = "市区町村を入力してください")
+	@Size(max = 50)
 	private String addr2;
 	
 	@NotBlank(message = "丁目を入力してください")
+	@Size(max = 50)
 	private String addr3;
 	
 	@NotBlank(message = "番地を入力してください")
+	@Size(max = 50)
 	private String addr4;
 	
+	@Size(max = 50)
 	private String addr5;
 	
 	private String birth_date;
