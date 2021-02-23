@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>編集結果画面</title>
+<!-- BootstrapのCSS読み込み -->
+<link href="../css/bootstrap.min.css" rel="stylesheet">
+<!-- jQuery読み込み -->
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<!-- BootstrapのJS読み込み -->
+<script src="../js/bootstrap.min.js"></script>
+</head>
+<body class="col-sm-6 mx-auto">
+	<h1 style="text-align: center;">編集結果確認画面</h1>
+	<div class="col-sm-8 mx-auto">
+		<span th:text="${message}"></span>
+
+		<form th:action="@{/editController/edit}" method="post"
+			th:object="${registerForm}">
+			<input type="hidden" name="id" th:value="${registerForm.id}">
+			<input type="hidden" name="user_name"
+				th:value="${registerForm.user_name}"> <input type="hidden"
+				name="user_name_kana" th:value="${registerForm.user_name_kana}">
+			<input type="hidden" name="sex" th:value="${registerForm.sex}">
+			<input type="hidden" name="tel" th:value="${registerForm.tel}">
+			<input type="hidden" name="postal_code"
+				th:value="${registerForm.postal_code}"> <input type="hidden"
+				name="addr1" th:value="${registerForm.addr1}"> <input
+				type="hidden" name="addr2" th:value="${registerForm.addr2}">
+			<input type="hidden" name="addr3" th:value="${registerForm.addr3}">
+			<input type="hidden" name="addr4" th:value="${registerForm.addr4}">
+			<input type="hidden" name="addr5" th:value="${registerForm.addr5}">
+			<input type="hidden" name="age" th:value="${registerForm.age}">
+			<input type="hidden" name="birth_date"
+				th:value="${registerForm.birth_date}">
+
+
+			<table class="table table-striped ">
+				<tr>
+					<th>ID</th>
+					<td><span th:text="${registerForm.id}"></span></td>
+				</tr>
+				<tr>
+					<th>ユーザー名</th>
+					<td><span th:text="${registerForm.user_name}"></span></td>
+				</tr>
+				<tr>
+					<th>ふりがな</th>
+					<td><span th:text="${registerForm.user_name_kana}"></span></td>
+				</tr>
+				<tr>
+					<th>性別</th>
+					<td th:switch="${registerForm.sex}"><label th:case="0">男</label>
+						<label th:case="1">女</label> <label th:case="*">未回答</label></td>
+				</tr>
+				<tr>
+					<th>電話番号</th>
+					<td><span th:text="${registerForm.tel}"></span></td>
+				</tr>
+				<tr>
+					<th>郵便番号</th>
+					<td><span th:text="${registerForm.postal_code}"></span></td>
+				</tr>
+				<tr>
+					<th>住所1</th>
+					<td><span th:text="${registerForm.addr1}"></span></td>
+				</tr>
+				<tr>
+					<th>住所2</th>
+					<td><span th:text="${registerForm.addr2}"></span></td>
+				</tr>
+				<tr>
+					<th>住所3</th>
+					<td><span th:text="${registerForm.addr3}"></span></td>
+				</tr>
+				<tr>
+					<th>住所4</th>
+					<td><span th:text="${registerForm.addr4}"></span></td>
+				</tr>
+				<tr>
+					<th>住所5</th>
+					<td><span th:text="${registerForm.addr5}"></span></td>
+				</tr>
+				<tr>
+					<th>年齢</th>
+					<td><span th:text="${registerForm.age}"></span></td>
+				</tr>
+				<tr>
+					<th>生年月日</th>
+					<td><span th:text="${registerForm.birth_date}"></span></td>
+				</tr>
+			</table>
+
+
+			<div class="mt-4 mb-4 d-flex flex-row-reverse">
+				<input type="submit" class="btn btn-primary col-sm-2" name="update"
+					value="更新"> <input type="submit"
+					class="btn btn-light col-sm-2 mr-2" name="return_edit" value="戻る">
+			</div>
+		</form>
+
+		<a href="index.html" th:href="@{/userController/input}">検索画面へ</a>
+	</div>
+</body>
+</html>
