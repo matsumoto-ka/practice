@@ -2,47 +2,116 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<link th:href="@{css/style.css}" rel="stylesheet" type="text/css">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>検索結果画面</title>
+<link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
+	rel="stylesheet">
+<!-- BootstrapのCSS読み込み -->
+<link href="../css/bootstrap.min.css" rel="stylesheet">
+<!-- jQuery読み込み -->
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<!-- BootstrapのJS読み込み -->
+<script src="../js/bootstrap.min.js"></script>
+<script>
+	
+</script>
 </head>
-<body>
+<body class="col-sm-6 mx-auto" style="text-align:center;">
 	<h1>検索結果画面</h1>
 	<span th:text="${message}"></span>
+	<div class="float-end">
+		<label th:text="${total} +'件中' + ${page} + 'ページ目'"></label>
+	</div>
 
-	<table>
+	<table class="table table-striped">
 		<tr>
-			<th>ID</th>
+			<th>
+				<form th:action="@{/userController/output}" method="get">
+					ID&nbsp; <input type="hidden" name="sortCondition" value="id">
+					<input type="hidden" name="id" th:value="${userForm.id}"> <input
+						type="hidden" name="sex" th:value="${userForm.sex}"> <input
+						type="hidden" name="age_from" th:value="${userForm.age_from}">
+					<input type="hidden" name="age_to" th:value="${userForm.age_to}">
+					<a href="javascript:document.forms[0].submit()"> <i
+						class="fas fa-sort"></i>
+					</a>
+				</form>
+			</th>
 			<th>ユーザー名</th>
 			<th>性別</th>
-			<th>年齢</th>
+			<th>
+				<form th:action="@{/userController/output}" method="get">
+					年齢&nbsp; <input type="hidden" name="sortCondition" value="age">
+					<input type="hidden" name="id" th:value="${userForm.id}"> <input
+						type="hidden" name="sex" th:value="${userForm.sex}"> <input
+						type="hidden" name="age_from" th:value="${userForm.age_from}">
+					<input type="hidden" name="age_to" th:value="${userForm.age_to}">
+					<a href="javascript:document.forms[1].submit()"> <i
+						class="fas fa-sort"></i>
+					</a>
+				</form>
+			</th>
 			<th>編集</th>
 			<th>削除</th>
 		</tr>
 		<tr th:each="user,iterStat:${userList}">
-			<td th:class="${iterStat.odd}? 'odd' : 'even'" th:text="${user.id}"></td>
-			<td th:class="${iterStat.odd}? 'odd' : 'even'"
-				th:text="${user.user_name}"></td>
-			<td th:class="${iterStat.odd}? 'odd' : 'even'" th:switch="${user.sex}" >
-					<label th:case="0">男</label>
-					<label th:case="1">女</label>
-					<label th:case="*">未回答</label>
-			</td>
-			<td th:class="${iterStat.odd}? 'odd' : 'even'" th:text="${user.age}"></td>
-			<td th:class="${iterStat.odd}? 'odd' : 'even'">
-				<form th:action="@{/edit}" method="post">
-					<input type="submit" class="btn" name="edit" value="編集">
+			<td th:text="${user.id}"></td>
+			<td th:text="${user.user_name}"></td>
+			<td th:switch="${user.sex}"><label th:case="0">男</label> <label
+				th:case="1">女</label> <label th:case="*">未回答</label></td>
+			<td th:text="${user.age}"></td>
+			<td>
+				<form th:action="@{/userController/edit}" method="post">
+					<input type="submit" class="btn btn-primary" name="edit" value="編集">
 					<input type="hidden" name="id" th:value="${user.id}">
 				</form>
 			</td>
-			<td th:class="${iterStat.odd}? 'odd' : 'even'">
-				<form th:action="@{/delete}" method="post">
-					<input type="submit" class="btn" name="delete" value="削除"
-					onclick='return confirm("削除してよろしいですか？");'>
-					<input type="hidden" name="id" th:value="${user.id}">
+			<td>
+				<form th:action="@{/userController/delete}" method="post">
+					<input type="submit" class="btn btn btn-light" name="delete"
+						value="削除" onclick='return confirm("削除してよろしいですか？");'> <input
+						type="hidden" name="id" th:value="${user.id}">
 				</form>
 			</td>
 		</tr>
 	</table>
-	<a href="index.html" th:href="@{input}">検索画面へ</a>
+	<!-- ここからページング処理 -->
+	<nav>
+		<ul class="pagination justify-content-center">
+			<li th:if="${startPage} > 1" class="page-item "><a
+				class="page-link"
+				th:href="@{'/userController/output?page=1' + '&sortCondition=' + ${userForm.sortCondition} + '&sex=' + ${userForm.sex} + '&age_from=' + ${userForm.age_from}+ '&age_to=' + ${userForm.age_to}}"
+				tabindex="-2">最初</a></li>
+			<li th:if="${page} > 1" class="page-item "><a class="page-link"
+				th:href="@{'/userController/output?page=' + ${page-1} +'&sortCondition=' + ${userForm.sortCondition} + '&sex=' + ${userForm.sex} + '&age_from=' + ${userForm.age_from}+ '&age_to=' + ${userForm.age_to}}"
+				tabindex="-1">前へ</a></li>
+			<th:block th:if="${endPage}<=0">
+				<li class="page-item " th:classappend="${i == page} ? active"
+					th:each="i : ${startPage}"><a class="page-link"
+					th:href="@{'/userController/output?page=' + ${i}  +'&sortCondition=' + ${userForm.sortCondition} + '&sex=' + ${userForm.sex} + '&age_from=' + ${userForm.age_from}+ '&age_to=' + ${userForm.age_to}}"
+					th:text="${i}"></a></li>
+			</th:block>
+			<!-- StartPageからEndPageまでのページ数を表示する -->
+			<th:block th:if="${endPage}>0">
+				<li class="page-item " th:classappend="${i == page} ? active"
+					th:each="i : ${#numbers.sequence(startPage, endPage)}"><a
+					class="page-link"
+					th:href="@{'/userController/output?page=' + ${i} +'&sortCondition=' + ${userForm.sortCondition} + '&sex=' + ${userForm.sex} + '&age_from=' + ${userForm.age_from}+ '&age_to=' + ${userForm.age_to}}"
+					th:text="${i}"></a></li>
+			</th:block>
+			<li th:if="${page} < ${totalPage}" class="page-item "><a
+				class="page-link"
+				th:href="@{'/userController/output?page=' + ${page+1} +'&sortCondition=' + ${userForm.sortCondition} + '&sex=' + ${userForm.sex} + '&age_from=' + ${userForm.age_from}+ '&age_to=' + ${userForm.age_to}}">次へ</a></li>
+			<li th:if="${endPage} < ${totalPage}" class="page-item "><a
+				class="page-link"
+				th:href="@{'/userController/output?page=' + ${totalPage} +'&sortCondition=' + ${userForm.sortCondition} + '&sex=' + ${userForm.sex} + '&age_from=' + ${userForm.age_from}+ '&age_to=' + ${userForm.age_to}}">最後</a></li>
+		</ul>
+	</nav>
+
+	<div style="text-align:left;">
+		<a href="index.html" th:href="@{input}">検索画面へ</a>
+	</div>
 </body>
 </html>

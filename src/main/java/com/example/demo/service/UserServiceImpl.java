@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<UserMstWithBLOBs> findByConditions(UserDto inDto) {
+	public UserDto findByConditions(UserDto inDto) {
 		// UserMstテーブルの条件検索用クラスを生成
 		UserMstExample ex = new UserMstExample();
 
@@ -41,25 +41,52 @@ public class UserServiceImpl implements UserService {
 		}
 		// 年齢
 		if (!StringUtils.isEmpty(inDto.getAge_from()) && !StringUtils.isEmpty(inDto.getAge_to())) {
-			ex.or().andAgeBetween(Integer.parseInt(inDto.getAge_from()),
-					Integer.parseInt(inDto.getAge_to()));
+			ex.or().andAgeBetween(Integer.parseInt(inDto.getAge_from()), Integer.parseInt(inDto.getAge_to()));
 		} else if (!(StringUtils.isEmpty(inDto.getAge_from()))) {
 			ex.or().andAgeGreaterThan(Integer.parseInt(inDto.getAge_from()));
 		} else if (!(StringUtils.isEmpty(inDto.getAge_to()))) {
 			ex.or().andAgeLessThan(Integer.parseInt(inDto.getAge_to()));
 		}
 
+		if (StringUtils.isNotEmpty(inDto.getSortCondition())) {
+			ex.setOrderByClause(inDto.getSortCondition());
+		} else {
+			ex.setOrderByClause("id");
+		}
+		ex.setLimit(inDto.getLimit());
+		ex.setOffset(inDto.getOffset());
+
+		// 戻り値用DTO
+		UserDto outUserDto = new UserDto();
+
 		// 検索実行
+		long total = userRepository.countByExample(ex);
 		List<UserMstWithBLOBs> userMstList = userRepository.findByConditions(ex);
 
-		return userMstList;
+		outUserDto.setTotal((int) total);
+		outUserDto.setUserList(userMstList);
+
+		return outUserDto;
+	}
+
+	@Override
+	public UserDto findById(UserDto inDto) {
+		// 戻り値用DTO
+		UserDto outUserDto = new UserDto();
+
+		// 検索実行
+		UserMstWithBLOBs userMst = userRepository.findById(inDto.getId());
+
+		outUserDto.setUserList((List<UserMstWithBLOBs>) userMst);
+
+		return outUserDto;
 	}
 
 	@Override
 	public int update(UserDto inDto) {
 		// UserMstテーブルの条件検索用クラスを生成
 		UserMstExample ex = new UserMstExample();
-		
+
 		// 条件にIDを設定
 		ex.createCriteria().andIdEqualTo(inDto.getId());
 
@@ -72,7 +99,7 @@ public class UserServiceImpl implements UserService {
 		record.setSex(Integer.parseInt(inDto.getSex()));
 		record.setTel(Long.parseLong(inDto.getTel()));
 		record.setPostal_code(Integer.parseInt(inDto.getPostal_code()));
-		
+
 		// 更新実行
 		int resultCode = userRepository.updateRecord(record, ex);
 
@@ -98,7 +125,6 @@ public class UserServiceImpl implements UserService {
 		record.setSex(Integer.parseInt(inDto.getSex()));
 		record.setTel(Long.parseLong(inDto.getTel()));
 		record.setPostal_code(Integer.parseInt(inDto.getPostal_code()));
-		
 
 		// 登録実行
 		int resultCode = userRepository.registerRecord(record);

@@ -1,5 +1,9 @@
 package com.example.demo.service;
 
+import java.util.List;
+
+import com.lab.app.ketman.mybatis.domain.UserMstWithBLOBs;
+
 import lombok.Data;
 
 @Data
@@ -33,4 +37,14 @@ public class UserDto {
 	private String age_from;
 	
 	private String age_to;
+	
+	private int limit;
+	
+	private int offset;
+	
+	private int total;
+	
+	private String sortCondition;
+	
+	private List<UserMstWithBLOBs> userList;
 }

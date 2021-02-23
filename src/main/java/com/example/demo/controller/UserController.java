@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -11,12 +10,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.service.UserDto;
 import com.example.demo.service.UserService;
 import com.lab.app.ketman.mybatis.domain.UserMstWithBLOBs;
 
 @Controller
+@RequestMapping("userController")
 public class UserController {
 
 	private final UserService userService;
@@ -36,11 +38,28 @@ public class UserController {
 		return "index.html";
 	}
 
-	@RequestMapping("/output")
-	public String result(@Validated UserForm userForm, BindingResult bindingResult, Model model) {
+	@RequestMapping(value = "output", method = RequestMethod.GET)
+	public String result(@Validated UserForm userForm, @RequestParam HashMap<String, String> params,
+			BindingResult bindingResult, Model model) {
 		if (bindingResult.hasErrors()) {
 			return "index.html";
 		}
+
+		// １ページの表示数
+		int limit = 20;
+
+		// ページネーションで表示するページ数
+		int showPageSize = 3;
+
+		// パラメータを設定し、現在のページを取得する
+		String currentPage = params.get("page");
+
+		// 初期表示ではパラメータを取得できないので、1ページに設定
+		if (currentPage == null) {
+			currentPage = "1";
+		}
+
+		UserDto outUserDto = new UserDto();
 
 		// FormからDTOに転記
 		UserDto inDto = new UserDto();
@@ -48,21 +67,41 @@ public class UserController {
 		if (!(StringUtils.isEmpty(userForm.getId()))) {
 			inDto.setId(Integer.parseInt(userForm.getId()));
 		}
+		inDto.setLimit(limit);
+		int offset = limit * (Integer.valueOf(currentPage) - 1);
+		inDto.setOffset(offset);
 
 		// サービス呼び出し
-		List<UserMstWithBLOBs> outUserDtoList = new ArrayList<UserMstWithBLOBs>();
-		outUserDtoList = userService.findByConditions(inDto);
+		outUserDto = userService.findByConditions(inDto);
+
+		// pagination処理
+		// "総数/1ページの表示数"から総ページ数を割り出す
+		int totalPage = (outUserDto.getTotal() + Integer.valueOf(limit) - 1) / Integer.valueOf(limit);
+		int page = Integer.valueOf(currentPage);
+
+		// 表示する最初のページ番号を算出（今回は3ページ表示する設定）
+		// (例)1,2,3ページのstartPageは1。4,5,6ページのstartPageは4
+		int startPage = page - (page - 1) % showPageSize;
+
+		// 表示する最後のページ番号を算出
+		int endPage = (startPage + showPageSize - 1 > totalPage) ? totalPage : startPage + showPageSize - 1;
 
 		// 検索結果が0件でない場合、検索結果をuserListに設定する
-		if (outUserDtoList.size() != 0) {
-			model.addAttribute("userList", outUserDtoList);
+		if (outUserDto.getTotal() != 0) {
+			model.addAttribute("total", outUserDto.getTotal());
+			model.addAttribute("page", page);
+			model.addAttribute("totalPage", totalPage);
+			model.addAttribute("startPage", startPage);
+			model.addAttribute("endPage", endPage);
+			model.addAttribute("userList", outUserDto.getUserList());
+			model.addAttribute("userForm", userForm);
 		} else {
 			model.addAttribute("message", "検索条件に該当するユーザー情報は存在しません");
 		}
 		return "output.html";
 	}
 
-	@RequestMapping("/edit")
+	@RequestMapping(value = "edit", params = "edit", method = RequestMethod.POST)
 	public String edit(@Validated UserForm userForm, BindingResult bindingResult, Model model) {
 		// FormからDTOに転記
 		UserDto inDto = new UserDto();
@@ -70,24 +109,27 @@ public class UserController {
 		if (!(StringUtils.isEmpty(userForm.getId()))) {
 			inDto.setId(Integer.parseInt(userForm.getId()));
 		}
-		
+		inDto.setLimit(1);
+
 		// サービス呼び出し
-		List<UserMstWithBLOBs> outUserDtoList = new ArrayList<UserMstWithBLOBs>();
-		outUserDtoList = userService.findByConditions(inDto);
+		UserDto outUserDto = new UserDto();
+		outUserDto = userService.findByConditions(inDto);
 
 		// 検索結果が0件でない場合、検索結果をuserFormに設定する
-		if (outUserDtoList != null) {
+		if (outUserDto.getUserList() != null) {
+			UserMstWithBLOBs result = outUserDto.getUserList().get(0);
+
 			RegisterForm registerForm = new RegisterForm();
 			// Formに値を設定
-			BeanUtils.copyProperties(outUserDtoList.get(0), registerForm);
-			registerForm.setId(outUserDtoList.get(0).getId().toString());
-			registerForm.setSex(outUserDtoList.get(0).getSex().toString());
-			registerForm.setAge(outUserDtoList.get(0).getAge().toString());
-			registerForm.setTel(outUserDtoList.get(0).getTel().toString());
-			registerForm.setPostal_code(outUserDtoList.get(0).getPostal_code().toString());
-			
+			BeanUtils.copyProperties(result, registerForm);
+			registerForm.setId(String.valueOf(result.getId()));
+			registerForm.setSex(result.getSex().toString());
+			registerForm.setAge(result.getAge().toString());
+			registerForm.setTel(result.getTel().toString());
+			registerForm.setPostal_code(result.getPostal_code().toString());
+
 			// 誕生日を年月日に分割して設定
-			String birthDate = outUserDtoList.get(0).getBirth_date();
+			String birthDate = result.getBirth_date();
 			registerForm.setBirth_year(birthDate.substring(0, 4));
 			// DBに登録されている月・日が0埋めされていないため、下記の処理で暫定対処
 			registerForm
@@ -103,7 +145,7 @@ public class UserController {
 		return "edit.html";
 	}
 
-	@RequestMapping("/edit_confirm")
+	@RequestMapping(value = "edit_confirm", params = "edit_confirm", method = RequestMethod.POST)
 	public String editConfirm(@Validated RegisterForm registerForm, BindingResult bindingResult, Model model) {
 		if (bindingResult.hasErrors()) {
 			return "edit.html";
@@ -116,48 +158,7 @@ public class UserController {
 		return "edit_confirm.html";
 	}
 
-	@RequestMapping("/return_edit")
-	public String returnEdit(RegisterForm registerForm, BindingResult bindingResult, Model model) {
-		// 誕生日を年月日に分割して設定
-		String birthDate = registerForm.getBirth_date();
-		registerForm.setBirth_year(birthDate.substring(0, 4));
-		// DBに登録されている月・日が0埋めされていないため、下記の処理で暫定対処
-		registerForm.setBirth_month(String.format("%2s", birthDate.substring(5, 7).replace("/", "")).replace(" ", "0"));
-		registerForm.setBirth_day(
-				String.format("%2s", birthDate.substring(birthDate.length() - 2).replace("/", "")).replace(" ", "0"));
-		
-		model.addAttribute("registerForm", registerForm);
-
-		return "edit.html";
-	}
-
-	@RequestMapping("/update")
-	public String update(@Validated UserForm userForm, BindingResult bindingResult, Model model) {
-		// FormからDTOに転記
-		UserDto inDto = new UserDto();
-		BeanUtils.copyProperties(userForm, inDto);
-		if (!StringUtils.isEmpty(userForm.getId())) {
-			inDto.setId(Integer.parseInt(userForm.getId()));
-		}
-
-		// サービス呼び出し
-		int resultCode = userService.update(inDto);
-
-		// 更新結果に応じてメッセージを設定する
-		if (resultCode != 0) {
-			model.addAttribute("message", "ID:" + userForm.getId() + "の情報を更新しました。");
-
-			// formを初期化し、検索画面に戻る
-			userForm = new UserForm();
-			model.addAttribute("userForm", userForm);
-			return "index.html";
-		} else {
-			model.addAttribute("message", "更新に失敗しました");
-		}
-		return "edit.html";
-	}
-
-	@RequestMapping("/delete")
+	@RequestMapping(value = "delete", params = "delete", method = RequestMethod.POST)
 	public String delete(@Validated UserForm userForm, BindingResult bindingResult, Model model) {
 		// FormからDTOに転記
 		UserDto inDto = new UserDto();
@@ -175,7 +176,8 @@ public class UserController {
 
 			// 更新後の情報を再検索（全件検索）
 			userForm = new UserForm();
-			this.result(userForm, bindingResult, model);
+			HashMap<String, String> params = new HashMap<String, String>();
+			this.result(userForm, params, bindingResult, model);
 		} else {
 			model.addAttribute("message", "削除に失敗しました");
 		}
@@ -188,7 +190,7 @@ public class UserController {
 		return "register.html";
 	}
 
-	@RequestMapping("/register_confirm")
+	@RequestMapping(value = "register", params = "register_confirm", method = RequestMethod.POST)
 	public String registerConfirm(@Validated RegisterForm registerForm, BindingResult bindingResult, Model model) {
 		if (bindingResult.hasErrors()) {
 			return "register.html";
@@ -199,8 +201,8 @@ public class UserController {
 		model.addAttribute("message", "登録結果を確認し、よろしければ「登録」をクリックしてください。");
 		return "register_confirm.html";
 	}
-	
-	@RequestMapping("/return_register")
+
+	@RequestMapping(value = "register", params = "return_register", method = RequestMethod.POST)
 	public String returnRegister(RegisterForm registerForm, BindingResult bindingResult, Model model) {
 		// 誕生日を年月日に分割して設定
 		String birthDate = registerForm.getBirth_date();
@@ -209,13 +211,13 @@ public class UserController {
 		registerForm.setBirth_month(String.format("%2s", birthDate.substring(5, 7).replace("/", "")).replace(" ", "0"));
 		registerForm.setBirth_day(
 				String.format("%2s", birthDate.substring(birthDate.length() - 2).replace("/", "")).replace(" ", "0"));
-		
+
 		model.addAttribute("registerForm", registerForm);
 
 		return "register.html";
 	}
 
-	@RequestMapping("/doRegister")
+	@RequestMapping(value = "register", params = "doRegister", method = RequestMethod.POST)
 	public String doRegister(@Validated RegisterForm registerForm, BindingResult bindingResult, Model model) {
 		// FormからDTOに転記
 		UserDto inDto = new UserDto();
