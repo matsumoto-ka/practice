@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -jar target/*.jar --server.port=$PORT
+web: java -jar target/YesDI-0.0.1-SNAPSHOT.jar
